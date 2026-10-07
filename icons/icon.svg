@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024"><clipPath id="rr"><rect width="1024" height="1024" rx="232"/></clipPath><g clip-path="url(#rr)">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b2540"/>
+      <stop offset="1" stop-color="#17657f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="48%" r="50%">
+      <stop offset="0" stop-color="#46b8cf" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#46b8cf" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#ffa152"/>
+      <stop offset="1" stop-color="#ee4a1a"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6f9fc"/>
+      <stop offset="1" stop-color="#a9b9c9"/>
+    </linearGradient>
+    <linearGradient id="flameIn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd9b8"/>
+      <stop offset="1" stop-color="#ffb27a"/>
+    </linearGradient>
+    <clipPath id="bodyclip">
+      <path d="M332 520 Q332 360 512 360 Q692 360 692 520 L692 738 Q692 800 630 800 L394 800 Q332 800 332 738 Z"/>
+    </clipPath>
+  <linearGradient id="shade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a1d05" stop-opacity="0"/><stop offset="1" stop-color="#7a1d05" stop-opacity="0.3"/></linearGradient>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#glow)"/>
+
+  <g transform="translate(512 524) scale(1.2) translate(-512 -578)">
+  <!-- sombra en el suelo -->
+  <ellipse cx="512" cy="858" rx="252" ry="24" fill="#031322" opacity="0.45"/>
+
+  <!-- base del balón -->
+  <rect x="376" y="786" width="272" height="58" rx="22" fill="#a52f0e"/>
+
+  <!-- asa y válvula -->
+  <path d="M418 392 V322 Q418 288 452 288 H572 Q606 288 606 322 V392" fill="none" stroke="url(#metal)" stroke-width="30" stroke-linecap="round"/>
+  <rect x="486" y="322" width="52" height="70" rx="14" fill="url(#metal)"/>
+  <rect x="474" y="304" width="76" height="28" rx="14" fill="url(#metal)"/>
+  <rect x="534" y="344" width="38" height="22" rx="9" fill="url(#metal)"/>
+
+  <!-- cuerpo -->
+  <path d="M332 520 Q332 360 512 360 Q692 360 692 520 L692 738 Q692 800 630 800 L394 800 Q332 800 332 738 Z" fill="url(#body)"/>
+  <g clip-path="url(#bodyclip)">
+    <rect x="540" y="340" width="170" height="480" fill="url(#shade)"/>
+  </g>
+  <path d="M368 545 V728" stroke="#ffffff" stroke-opacity="0.3" stroke-width="26" stroke-linecap="round" fill="none"/>
+
+  <!-- llama -->
+  <path d="M512 486 C548 528 586 566 586 620 C586 670 553 702 512 702 C471 702 438 670 438 624 C438 592 458 572 476 556 C478 582 491 594 503 594 C497 552 499 520 512 486 Z" fill="#ffffff"/>
+  <path d="M512 596 C532 622 550 638 550 662 C550 683 533 696 512 696 C491 696 474 683 474 664 C474 644 493 630 512 596 Z" fill="url(#flameIn)"/>
+  </g>
+</g></svg>
