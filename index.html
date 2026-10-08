@@ -127,9 +127,26 @@ svg { display: block; }
 .pace { margin: 0; font-size: 15px; }
 .pace.over { color: var(--over); font-weight: 600; }
 .hint { margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
-.card .row-actions { display: flex; gap: 10px; }
-.card .row-actions .btn.primary { flex: 1; min-width: 0; }
+.card .row-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.card .row-actions .btn { flex: 1 1 0; min-width: 0; }
+.card .row-actions .btn.primary { flex: 1 1 100%; }
+.card .row-actions .btn.ghost { padding: 0 8px; white-space: nowrap; }
 .empty-title { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.15; text-wrap: balance; margin: 0; }
+
+/* Balones: en uso y de reserva */
+.fleet { display: flex; justify-content: center; gap: 20px; padding: 4px 0 2px; }
+.unit { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; flex: 1 1 0; max-width: 150px; }
+.unit svg { width: 92px; max-width: 100%; height: auto; }
+.cap { text-align: center; line-height: 1.25; }
+.cap b { display: block; font-size: 15px; font-weight: 600; }
+.cap span { display: block; font-size: 13px; color: var(--muted); }
+.t-shell { fill: var(--track); stroke: none; }
+.t-fill { fill: var(--accent); }
+.t-outline { fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linejoin: round; }
+.t-outline.is-empty { stroke-dasharray: 6 5; }
+.t-handle { fill: none; stroke: var(--muted); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.t-valve, .t-base { fill: var(--muted); }
+.row.is-reserve .dur b { color: var(--muted); }
 
 /* Resumen */
 .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -267,18 +284,33 @@ svg { display: block; }
 
   /* ---------- Datos ---------- */
   function norm(t) {
-    if (!t || !DATE_RE.test(String(t.open))) return null;
-    var close = t.close && DATE_RE.test(String(t.close)) ? String(t.close) : null;
-    if (close && close < t.open) return null;
+    if (!t) return null;
+    var open = DATE_RE.test(String(t.open)) ? String(t.open) : null;
+    var bought = DATE_RE.test(String(t.bought)) ? String(t.bought) : null;
+    if (!open && !bought) return null;
+    var close = open && t.close && DATE_RE.test(String(t.close)) ? String(t.close) : null;
+    if (close && close < open) return null;
     var id = String(t.id || '').replace(/[^\w-]/g, '') || genId();
     var kg = +t.kg > 0 ? +t.kg : null;
     var price = +t.price > 0 ? Math.round(+t.price) : null;
-    return { id: id, open: String(t.open), close: close, kg: kg, price: price };
+    return { id: id, bought: bought, open: open, close: close, kg: kg, price: price };
   }
-  function toDoc(t) { return { open: t.open, close: t.close || '', kg: t.kg || 0, price: t.price || 0 }; }
-  function sortTanks() { tanks.sort(function (a, b) { return a.open < b.open ? 1 : a.open > b.open ? -1 : (a.id < b.id ? 1 : -1); }); }
+  function toDoc(t) { return { bought: t.bought || '', open: t.open || '', close: t.close || '', kg: t.kg || 0, price: t.price || 0 }; }
+  function sortKey(t) { return t.open || t.bought; }
+  function sortTanks() {
+    tanks.sort(function (a, b) {
+      var ra = !a.open, rb = !b.open;
+      if (ra !== rb) return ra ? -1 : 1;
+      var ka = sortKey(a), kb = sortKey(b);
+      return ka < kb ? 1 : ka > kb ? -1 : (a.id < b.id ? 1 : -1);
+    });
+  }
   function find(id) { for (var i = 0; i < tanks.length; i++) if (tanks[i].id === id) return tanks[i]; return null; }
-  function activeTank() { for (var i = 0; i < tanks.length; i++) if (!tanks[i].close) return tanks[i]; return null; }
+  function activeTank() { for (var i = 0; i < tanks.length; i++) if (tanks[i].open && !tanks[i].close) return tanks[i]; return null; }
+  // Balones comprados y aún sin abrir, del más antiguo al más nuevo (se usa primero el más antiguo)
+  function reserves() {
+    return tanks.filter(function (t) { return !t.open; }).sort(function (a, b) { return a.bought < b.bought ? -1 : a.bought > b.bought ? 1 : (a.id < b.id ? -1 : 1); });
+  }
 
   function loadLocal() {
     var list = [];
@@ -333,34 +365,81 @@ svg { display: block; }
     return '<header class="top"><span class="mark">' + I_FLAME + '</span><div><div class="eyebrow">Gas licuado</div><h1>Balón de gas</h1></div></header>';
   }
 
+  var BODY = 'M16 62Q16 26 50 26Q84 26 84 62V120Q84 134 70 134H30Q16 134 16 120Z';
+  // Figura de un balón; `frac` es la parte que sigue llena (0 a 1)
+  function tankSvg(frac, uid, label) {
+    frac = Math.max(0, Math.min(1, frac));
+    var hh = 108 * frac, y = 134 - hh;
+    return '<svg viewBox="0 0 100 150" role="img" aria-label="' + label + '">' +
+      '<defs><clipPath id="cp-' + uid + '"><path d="' + BODY + '"/></clipPath></defs>' +
+      '<path class="t-handle" d="M33 24V15Q33 9 39 9H61Q67 9 67 15V24"/>' +
+      '<rect class="t-valve" x="44" y="14" width="12" height="14" rx="3"/>' +
+      '<rect class="t-base" x="24" y="132" width="52" height="11" rx="4"/>' +
+      '<path class="t-shell" d="' + BODY + '"/>' +
+      (frac > 0 ? '<rect class="t-fill" x="0" y="' + y.toFixed(1) + '" width="100" height="' + hh.toFixed(1) + '" clip-path="url(#cp-' + uid + ')"/>' : '') +
+      '<path class="t-outline' + (frac === 0 ? ' is-empty' : '') + '" d="' + BODY + '"/></svg>';
+  }
+
+  // Dos balones: el que está en uso (según su consumo) y el de reserva (lleno si está comprado)
+  function fleet(act, st) {
+    var res = reserves();
+    var f1 = 0, t1 = 'Sin uso', s1 = 'Vacío', l1;
+    if (act) {
+      var d = Math.max(diff(act.open, todayKey()), 0);
+      t1 = 'En uso';
+      if (st.avg == null) { f1 = 1; s1 = 'Sin promedio aún'; l1 = 'Balón en uso, sin promedio para estimar el consumo'; }
+      else {
+        var avgR = Math.max(Math.round(st.avg), 1);
+        var used = Math.min(d / avgR, 1);
+        f1 = 1 - used;
+        s1 = d > avgR ? 'Sobre el promedio' : 'Consumido ~' + Math.round(used * 100) + '%';
+        l1 = 'Balón en uso, consumido ' + Math.round(used * 100) + ' por ciento';
+      }
+      if (act.kg) t1 += ' · ' + act.kg + ' kg';
+    }
+    if (!l1) l1 = 'Sin balón en uso, vacío';
+    var n = res.length, f2 = n ? 1 : 0;
+    var t2 = 'Reserva' + (n > 1 ? ' ×' + n : ''), s2 = n ? 'Lleno, sin abrir' : 'Sin reserva';
+    if (n && res[0].kg) t2 += ' · ' + res[0].kg + ' kg';
+    return '<div class="fleet">' +
+      '<div class="unit">' + tankSvg(f1, 'uso', l1) + '<div class="cap"><b>' + t1 + '</b><span>' + s1 + '</span></div></div>' +
+      '<div class="unit">' + tankSvg(f2, 'res', n ? 'Balón de reserva, lleno' : 'Sin balón de reserva, vacío') + '<div class="cap"><b>' + t2 + '</b><span>' + s2 + '</span></div></div>' +
+      '</div>';
+  }
+
   function activeCard(act, st) {
     var d = Math.max(diff(act.open, todayKey()), 0);
+    var hasRes = reserves().length > 0;
     var h = '<section class="card" aria-label="Balón en uso">';
     h += '<div class="card-head"><span class="eyebrow">Balón en uso</span>' + (act.kg ? '<span class="chip">' + act.kg + ' kg</span>' : '') + '</div>';
     h += '<div class="days"><b>' + d + '</b><span>' + plural(d, 'día', 'días') + ' de uso</span></div>';
     h += '<p class="since">' + (d === 0 ? 'Abierto hoy, ' : 'Abierto el ') + fmt(act.open) + '</p>';
+    h += fleet(act, st);
     if (st.avg == null) {
       h += '<p class="pace muted">El promedio se calcula cuando se cierra el primer balón.</p>';
     } else {
       var avgR = Math.max(Math.round(st.avg), 1);
       var left = avgR - d;
-      var pct = Math.min(Math.round((d / avgR) * 100), 100);
-      var over = left < 0;
-      h += '<div class="bar' + (over ? ' over' : '') + '" role="progressbar" aria-label="Avance respecto al promedio" aria-valuemin="0" aria-valuemax="' + avgR + '" aria-valuenow="' + Math.min(d, avgR) + '"><span style="width:' + pct + '%"></span></div>';
-      if (left > 0) h += '<p class="pace">Con tu promedio de ' + num(Math.round(st.avg * 10) / 10) + ' días, duraría hasta el ' + fmt(addDays(act.open, avgR)) + ' (faltan unos ' + left + ' ' + plural(left, 'día', 'días') + ').</p>';
-      else if (left === 0) h += '<p class="pace">Llegó a tu promedio de ' + num(Math.round(st.avg * 10) / 10) + ' días.</p>';
-      else h += '<p class="pace over">Lleva ' + (-left) + ' ' + plural(-left, 'día', 'días') + ' sobre tu promedio de ' + num(Math.round(st.avg * 10) / 10) + ' días.</p>';
+      var avgTxt = num(Math.round(st.avg * 10) / 10);
+      if (left > 0) h += '<p class="pace">Con tu promedio de ' + avgTxt + ' días, duraría hasta el ' + fmt(addDays(act.open, avgR)) + ' (faltan unos ' + left + ' ' + plural(left, 'día', 'días') + ').</p>';
+      else if (left === 0) h += '<p class="pace">Llegó a tu promedio de ' + avgTxt + ' días.</p>';
+      else h += '<p class="pace over">Lleva ' + (-left) + ' ' + plural(-left, 'día', 'días') + ' sobre tu promedio de ' + avgTxt + ' días.</p>';
     }
-    h += '<div class="row-actions"><button class="btn primary" data-act="open">Abrir nuevo balón</button><button class="btn ghost" data-act="edit" data-id="' + act.id + '">Editar</button></div>';
-    h += '<p class="hint">Al abrir uno nuevo, el actual se cierra en esa misma fecha.</p>';
+    h += '<div class="row-actions"><button class="btn primary" data-act="open">' + (hasRes ? 'Abrir balón de reserva' : 'Abrir nuevo balón') + '</button>' +
+      '<button class="btn ghost" data-act="buy">Registrar compra</button>' +
+      '<button class="btn ghost" data-act="edit" data-id="' + act.id + '">Editar</button></div>';
+    h += '<p class="hint">' + (hasRes ? 'Al abrir la reserva, el balón actual se cierra en esa misma fecha.' : 'Si ya compraste el próximo balón, regístralo con “Registrar compra”.') + '</p>';
     return h + '</section>';
   }
 
-  function emptyCard() {
+  function emptyCard(st) {
+    var hasRes = reserves().length > 0;
     return '<section class="card" aria-label="Sin balón en uso"><span class="eyebrow">Sin balón en uso</span>' +
-      '<p class="empty-title">Registra el balón que estás usando</p>' +
-      '<p class="muted">Indica cuándo lo abriste y la app cuenta los días de uso hasta que lo reemplaces.</p>' +
-      '<button class="btn primary block" data-act="open">Abrir balón</button></section>';
+      '<p class="empty-title">' + (hasRes ? 'Tienes un balón de reserva lleno' : 'Registra el balón que estás usando') + '</p>' +
+      '<p class="muted">' + (hasRes ? 'Cuando lo abras, la app cuenta los días de uso desde esa fecha.' : 'Indica cuándo lo abriste y la app cuenta los días de uso hasta que lo reemplaces.') + '</p>' +
+      fleet(null, st) +
+      '<div class="row-actions"><button class="btn primary" data-act="open">' + (hasRes ? 'Abrir balón de reserva' : 'Abrir balón') + '</button>' +
+      '<button class="btn ghost" data-act="buy">Registrar compra</button></div></section>';
   }
 
   function statsBlock(st) {
@@ -408,15 +487,20 @@ svg { display: block; }
       h += '<ul class="list">';
       var today = todayKey();
       tanks.forEach(function (t) {
-        var isAct = !t.close;
-        var d = isAct ? Math.max(diff(t.open, today), 0) : diff(t.open, t.close);
+        var isRes = !t.open;
+        var isAct = !isRes && !t.close;
+        var d = isRes ? 0 : (isAct ? Math.max(diff(t.open, today), 0) : diff(t.open, t.close));
         var meta = [];
         if (t.kg) meta.push(t.kg + ' kg');
         if (t.price) meta.push(money(t.price));
-        h += '<li><button class="row' + (isAct ? ' is-active' : '') + '" data-act="edit" data-id="' + t.id + '" aria-label="Editar balón, ' + d + ' ' + plural(d, 'día', 'días') + (isAct ? ', en uso' : '') + '">' +
-          '<div class="dur"><b>' + d + '</b><span>' + plural(d, 'día', 'días') + '</span></div>' +
-          '<div class="info"><span class="range">' + (isAct ? 'Desde ' + fmt(t.open) : range(t.open, t.close)) + '</span>' +
-          '<span class="meta">' + (isAct ? '<span class="badge">En uso</span>' : '') + meta.join(' · ') + '</span></div>' + I_CHEV + '</button></li>';
+        var rng = isRes ? 'Comprado el ' + fmt(t.bought) : (isAct ? 'Desde ' + fmt(t.open) : range(t.open, t.close));
+        var badge = isRes ? '<span class="badge">En reserva</span>' : (isAct ? '<span class="badge">En uso</span>' : '');
+        var dur = isRes ? '<b>—</b><span>lleno</span>' : '<b>' + d + '</b><span>' + plural(d, 'día', 'días') + '</span>';
+        var aria = isRes ? 'Editar balón de reserva comprado el ' + fmt(t.bought) : 'Editar balón, ' + d + ' ' + plural(d, 'día', 'días') + (isAct ? ', en uso' : '');
+        h += '<li><button class="row' + (isAct ? ' is-active' : '') + (isRes ? ' is-reserve' : '') + '" data-act="edit" data-id="' + t.id + '" aria-label="' + aria + '">' +
+          '<div class="dur">' + dur + '</div>' +
+          '<div class="info"><span class="range">' + rng + '</span>' +
+          '<span class="meta">' + badge + meta.join(' · ') + '</span></div>' + I_CHEV + '</button></li>';
       });
       h += '</ul>';
     }
@@ -438,7 +522,7 @@ svg { display: block; }
     }
     var st = stats();
     var act = activeTank();
-    var h = header() + (act ? activeCard(act, st) : emptyCard()) + statsBlock(st);
+    var h = header() + (act ? activeCard(act, st) : emptyCard(st)) + statsBlock(st);
     if (st.n > 0) h += chartBlock(st);
     h += historyBlock() + backupBlock();
     app.innerHTML = h;
@@ -447,14 +531,27 @@ svg { display: block; }
   /* ---------- Hoja de registro ---------- */
   function renderSheet() {
     var s = sheet, t = s.id ? find(s.id) : null, today = todayKey();
-    var last = tanks[0] || null, act = activeTank();
-    var title, sub = '', openV = '', closeV = '', kgV = last && last.kg ? last.kg : '', priceV = '', showClose = false, submit;
+    var known = tanks.filter(function (x) { return x.kg; })[0] || null;
+    var act = activeTank(), res = reserves()[0] || null;
+    var title, sub = '', openV = '', closeV = '', boughtV = '', kgV = known ? known.kg : '', priceV = '';
+    var showOpen = true, showClose = false, showBought = false, submit;
     if (s.mode === 'open') {
-      title = 'Abrir nuevo balón'; openV = today; submit = 'Abrir balón';
-      sub = act ? 'El balón actual se cerrará en la misma fecha.' : 'Desde esa fecha se cuentan los días de uso.';
+      title = res ? 'Abrir balón de reserva' : 'Abrir nuevo balón'; openV = today; submit = 'Abrir balón';
+      if (res) {
+        kgV = res.kg || kgV; priceV = res.price || '';
+        sub = 'Se usará el balón comprado el ' + fmt(res.bought) + '.' + (act ? ' El actual se cerrará en la misma fecha.' : '');
+      } else {
+        sub = act ? 'El balón actual se cerrará en la misma fecha.' : 'Desde esa fecha se cuentan los días de uso.';
+      }
+    } else if (s.mode === 'buy') {
+      title = 'Registrar compra'; boughtV = today; showOpen = false; showBought = true; submit = 'Guardar compra';
+      sub = 'Queda como balón de reserva, lleno y sin abrir. Los días de uso se cuentan desde que lo abras.';
     } else if (s.mode === 'past') {
       title = 'Registro anterior'; showClose = true; submit = 'Guardar registro';
       sub = 'Agrega un balón que ya usaste, con sus fechas de apertura y cierre.';
+    } else if (!t.open) {
+      title = 'Editar balón de reserva'; showOpen = false; showBought = true; submit = 'Guardar cambios';
+      boughtV = t.bought; kgV = t.kg || ''; priceV = t.price || '';
     } else {
       title = t.close ? 'Editar registro' : 'Editar balón en uso'; submit = 'Guardar cambios';
       openV = t.open; closeV = t.close || ''; kgV = t.kg || ''; priceV = t.price || ''; showClose = !!t.close;
@@ -468,13 +565,14 @@ svg { display: block; }
     var h = '<div class="backdrop" data-act="cancel"></div>' +
       '<form class="panel" id="sheet-form" novalidate role="dialog" aria-modal="true" aria-labelledby="sheet-title" tabindex="-1">' +
       '<h2 id="sheet-title">' + title + '</h2>' + (sub ? '<p class="sub">' + sub + '</p>' : '') +
-      '<label class="field"><span>Fecha de apertura</span><input type="date" id="f-open" value="' + openV + '" max="' + today + '" required></label>' +
+      (showBought ? '<label class="field"><span>Fecha de compra</span><input type="date" id="f-bought" value="' + boughtV + '" max="' + today + '" required></label>' : '') +
+      (showOpen ? '<label class="field"><span>Fecha de apertura</span><input type="date" id="f-open" value="' + openV + '" max="' + today + '" required></label>' : '') +
       (showClose ? '<label class="field"><span>Fecha de cierre</span><input type="date" id="f-close" value="' + closeV + '" max="' + today + '" required></label>' : '') +
       '<fieldset class="field"><legend>Tamaño (opcional)</legend><div class="chips">' + chips + '</div></fieldset>' +
       '<label class="field"><span>Precio pagado (opcional)</span><div class="price-wrap"><b>$</b><input type="text" id="f-price" inputmode="numeric" autocomplete="off" placeholder="Ej. 24.500" value="' + (priceV ? String(priceV).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '') + '"></div></label>' +
       '<p class="err" id="f-err" role="alert" hidden></p>' +
       '<div class="stack"><button type="submit" class="btn primary block">' + submit + '</button>' +
-      (s.mode === 'edit' && !t.close ? '<button type="button" class="btn ghost block" data-act="close-now">Cerrar hoy sin abrir otro</button>' : '') +
+      (s.mode === 'edit' && t.open && !t.close ? '<button type="button" class="btn ghost block" data-act="close-now">Cerrar hoy sin abrir otro</button>' : '') +
       (s.mode === 'edit' ? '<button type="button" class="btn danger block" data-act="delete">Eliminar registro</button>' : '') +
       '<button type="button" class="btn ghost block" data-act="cancel">Cancelar</button></div></form>';
     sheetEl.innerHTML = h;
@@ -523,35 +621,50 @@ svg { display: block; }
     ev.preventDefault();
     if (!sheet || busy) return;
     var today = todayKey();
-    var open = document.getElementById('f-open').value;
+    var openEl = document.getElementById('f-open');
+    var boughtEl = document.getElementById('f-bought');
     var closeEl = document.getElementById('f-close');
+    var open = openEl ? openEl.value : '';
+    var bought = boughtEl ? boughtEl.value : '';
     var close = closeEl ? closeEl.value : '';
     var kgEl = sheetEl.querySelector('input[name="kg"]:checked');
     var kg = kgEl && kgEl.value ? +kgEl.value : null;
     var rawP = document.getElementById('f-price').value.replace(/[.\s$]/g, '');
     if (rawP && !/^\d+$/.test(rawP)) { setErr('El precio debe ser un número, por ejemplo 24500.'); return; }
     var price = rawP ? +rawP : null;
-    if (!DATE_RE.test(open)) { setErr('Indica la fecha de apertura.'); return; }
-    if (open > today) { setErr('La fecha de apertura no puede ser futura.'); return; }
+    if (boughtEl) {
+      if (!DATE_RE.test(bought)) { setErr('Indica la fecha de compra.'); return; }
+      if (bought > today) { setErr('La fecha de compra no puede ser futura.'); return; }
+    }
+    if (openEl) {
+      if (!DATE_RE.test(open)) { setErr('Indica la fecha de apertura.'); return; }
+      if (open > today) { setErr('La fecha de apertura no puede ser futura.'); return; }
+    }
     if (closeEl) {
       if (!DATE_RE.test(close)) { setErr('Indica la fecha de cierre.'); return; }
       if (close > today) { setErr('La fecha de cierre no puede ser futura.'); return; }
       if (close < open) { setErr('El cierre no puede ser anterior a la apertura.'); return; }
     }
-    var act = activeTank(), t = sheet.id ? find(sheet.id) : null;
+    var act = activeTank(), res = reserves()[0] || null, t = sheet.id ? find(sheet.id) : null;
     var ups = [], msg = '';
     if (sheet.mode === 'open') {
       if (act && open < act.open) { setErr('El balón actual se abrió el ' + fmt(act.open) + '. La nueva apertura no puede ser anterior.'); return; }
+      if (res && open < res.bought) { setErr('El balón de reserva se compró el ' + fmt(res.bought) + '. La apertura no puede ser anterior.'); return; }
       if (act) ups.push(Object.assign({}, act, { close: open }));
-      ups.push({ id: genId(), open: open, close: null, kg: kg, price: price });
-      msg = 'Balón abierto';
+      if (res) ups.push(Object.assign({}, res, { open: open, kg: kg, price: price }));
+      else ups.push({ id: genId(), bought: null, open: open, close: null, kg: kg, price: price });
+      msg = res ? 'Balón de reserva abierto' : 'Balón abierto';
+    } else if (sheet.mode === 'buy') {
+      ups.push({ id: genId(), bought: bought, open: null, close: null, kg: kg, price: price });
+      msg = 'Compra registrada';
     } else if (sheet.mode === 'past') {
       if (act && close > act.open) { setErr('Ese balón termina después de la apertura del balón actual (' + fmt(act.open) + '). Revisa la fecha de cierre.'); return; }
-      ups.push({ id: genId(), open: open, close: close, kg: kg, price: price });
+      ups.push({ id: genId(), bought: null, open: open, close: close, kg: kg, price: price });
       msg = 'Registro agregado';
     } else {
       if (!t) { closeSheet(); return; }
-      ups.push(Object.assign({}, t, { open: open, close: t.close ? close : null, kg: kg, price: price }));
+      if (!t.open) ups.push(Object.assign({}, t, { bought: bought, kg: kg, price: price }));
+      else ups.push(Object.assign({}, t, { open: open, close: t.close ? close : null, kg: kg, price: price }));
       msg = 'Cambios guardados';
     }
     busy = true;
@@ -568,6 +681,7 @@ svg { display: block; }
     if (!b) return;
     var a = b.getAttribute('data-act');
     if (a === 'open') openSheet('open');
+    else if (a === 'buy') openSheet('buy');
     else if (a === 'past') openSheet('past');
     else if (a === 'edit') openSheet('edit', b.getAttribute('data-id'));
     else if (a === 'bk-copy') backupCopy();
@@ -576,7 +690,7 @@ svg { display: block; }
 
   function backupCopy() {
     var ta = document.getElementById('bk-text');
-    var json = JSON.stringify(tanks.map(function (t) { return { id: t.id, open: t.open, close: t.close, kg: t.kg, price: t.price }; }));
+    var json = JSON.stringify(tanks.map(function (t) { return { id: t.id, bought: t.bought, open: t.open, close: t.close, kg: t.kg, price: t.price }; }));
     ta.value = json;
     function manual() { ta.focus(); ta.select(); toast('Selecciona el texto y cópialo'); }
     try {
