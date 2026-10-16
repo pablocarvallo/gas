@@ -1,5 +1,5 @@
 // Service worker mínimo: deja la app disponible sin conexión.
-const CACHE = 'balon-gas-v3';
+const CACHE = 'balon-gas-v4';
 const ASSETS = [
   './',
   'index.html',

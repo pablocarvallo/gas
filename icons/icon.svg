@@ -15,13 +15,13 @@
       <stop offset="1" stop-color="#a9b6c1"/>
     </linearGradient>
     <linearGradient id="guard" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#e9eef2"/>
+      <stop offset="0" stop-color="#eef2f5"/>
       <stop offset="1" stop-color="#b3bfca"/>
     </linearGradient>
-    <linearGradient id="green" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#2b8a37"/>
-      <stop offset="0.4" stop-color="#86d655"/>
-      <stop offset="1" stop-color="#25762f"/>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9aa8b4"/>
+      <stop offset="0.45" stop-color="#e3e9ee"/>
+      <stop offset="1" stop-color="#8795a1"/>
     </linearGradient>
     <linearGradient id="flameG" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ff9a3c"/>
@@ -37,33 +37,31 @@
   <rect width="1024" height="1024" fill="url(#glow)"/>
 
   <!-- sombra en el suelo -->
-  <ellipse cx="512" cy="884" rx="200" ry="23" fill="#031322" opacity="0.5"/>
+  <ellipse cx="512" cy="852" rx="205" ry="23" fill="#031322" opacity="0.5"/>
 
-  <!-- balón de 45 kg: coordenadas 100 x 260 -->
-  <g transform="translate(357 96) scale(3.1)">
+  <!-- balón de 45 kg: coordenadas 100 x 280 -->
+  <g transform="translate(374.5 90) scale(2.75)">
     <!-- base con orificios -->
-    <rect x="18" y="226" width="64" height="26" rx="5" fill="#9fadb9"/>
-    <circle cx="32" cy="241" r="3.8" fill="#4d5b68"/>
-    <circle cx="50" cy="241" r="3.8" fill="#4d5b68"/>
-    <circle cx="68" cy="241" r="3.8" fill="#4d5b68"/>
+    <rect x="16" y="244" width="68" height="32" rx="6" fill="#9fadb9"/>
+    <circle cx="35" cy="262" r="4.2" fill="#4d5b68"/>
+    <circle cx="50" cy="262" r="4.2" fill="#4d5b68"/>
+    <circle cx="65" cy="262" r="4.2" fill="#4d5b68"/>
+    <ellipse cx="22.5" cy="262" rx="2" ry="4.2" fill="#4d5b68"/>
+    <ellipse cx="77.5" cy="262" rx="2" ry="4.2" fill="#4d5b68"/>
 
-    <!-- protector y válvula -->
-    <path d="M23 44 L27 17 Q28 10 35 10 H41 V44 Z" fill="url(#guard)"/>
-    <path d="M77 44 L73 17 Q72 10 65 10 H59 V44 Z" fill="url(#guard)"/>
-    <rect x="22" y="33" width="56" height="11" rx="4" fill="url(#guard)"/>
-    <rect x="43" y="12" width="14" height="32" rx="3" fill="url(#green)"/>
-    <rect x="45.5" y="5" width="9" height="9" rx="2.2" fill="#2b8a37"/>
-    <g stroke="#1c6528" stroke-width="1.4" stroke-opacity="0.55" stroke-linecap="round">
-      <path d="M43.6 18H56.4M43.6 23H56.4M43.6 28H56.4M43.6 33H56.4"/>
-    </g>
+    <!-- protector con ventana y válvula metálica -->
+    <path d="M16 44L20 13Q22 3 32 3H68Q78 3 80 13L84 44Z" fill="url(#guard)"/>
+    <rect x="37" y="9" width="26" height="31" rx="6" fill="#3d4a56"/>
+    <rect x="46" y="17" width="8" height="25" rx="2" fill="url(#metal)"/>
+    <rect x="43.5" y="12" width="13" height="7" rx="2.2" fill="url(#metal)"/>
 
     <!-- cuerpo -->
-    <path d="M12 84C12 52 28 42 50 42C72 42 88 52 88 84V224Q88 232 80 232H20Q12 232 12 224Z" fill="url(#shell)"/>
-    <rect x="18" y="66" width="8" height="150" rx="4" fill="#ffffff" opacity="0.65"/>
-    <path d="M12 216H88" stroke="#a9b6c1" stroke-width="1.2" opacity="0.8"/>
+    <path d="M6 92C6 56 24 38 50 38C76 38 94 56 94 92V240Q94 250 84 250H16Q6 250 6 240Z" fill="url(#shell)"/>
+    <rect x="13" y="84" width="9" height="150" rx="4.5" fill="#ffffff" opacity="0.65"/>
+    <path d="M6 236H94" stroke="#a9b6c1" stroke-width="1.2" opacity="0.8"/>
 
     <!-- llama -->
-    <g transform="translate(50 128) scale(0.3) translate(-512 -594)">
+    <g transform="translate(50 140) scale(0.32) translate(-512 -594)">
       <path d="M512 486 C548 528 586 566 586 620 C586 670 553 702 512 702 C471 702 438 670 438 624 C438 592 458 572 476 556 C478 582 491 594 503 594 C497 552 499 520 512 486 Z" fill="url(#flameG)"/>
       <path d="M512 596 C532 622 550 638 550 662 C550 683 533 696 512 696 C491 696 474 683 474 664 C474 644 493 630 512 596 Z" fill="url(#flameIn)"/>
     </g>

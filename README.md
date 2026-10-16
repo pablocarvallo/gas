@@ -6,7 +6,7 @@ App personal para llevar el control de los balones de gas licuado: registra cuá
 
 - **Abrir nuevo balón**: indica la fecha de apertura (por defecto hoy). Si había uno en uso, se cierra en esa misma fecha.
 - **Registrar compra**: guarda un balón comprado que aún no se abre (reserva). Al usar "Abrir balón de reserva", ese balón pasa a estar en uso y el actual se cierra en la misma fecha.
-- **Dos balones de 45 kg**: la tarjeta principal dibuja el balón en uso (cilindro blanco alto con válvula verde), coloreado según lo que queda (estimado con tu promedio de días), y el de reserva, lleno si está comprado y sin abrir o vacío si no hay reserva.
+- **Dos balones de 45 kg**: la tarjeta principal dibuja el balón en uso (cilindro blanco alto con protector y base con orificios), coloreado según lo que queda (estimado con tu promedio de días), y el de reserva, lleno si está comprado y sin abrir o vacío si no hay reserva.
 - **Días de uso**: muestra cuántos días lleva el balón actual, el porcentaje consumido y la fecha estimada de cambio.
 - **Historial**: lista de todos los balones con fechas, días de uso, tamaño y precio (opcionales). Cada registro se puede editar o eliminar.
 - **Registros anteriores**: botón para ingresar a mano balones que ya usaste, con sus fechas de apertura y cierre.

@@ -30,7 +30,6 @@
   --line: #d8dee5;
   --track: #e2e8ee;
   --accent: #c2410c;
-  --valve: #2f8f3a;
   --accent-bg: #fdebe0;
   --on-accent: #ffffff;
   --over: #b42318;
@@ -52,7 +51,6 @@
     --line: #2a3541;
     --track: #26313c;
     --accent: #ff9158;
-  --valve: #5fcf6b;
     --accent-bg: #3a2619;
     --on-accent: #1d0d02;
     --over: #ff9b92;
@@ -69,7 +67,6 @@
   --line: #2a3541;
   --track: #26313c;
   --accent: #ff9158;
-  --valve: #5fcf6b;
   --accent-bg: #3a2619;
   --on-accent: #1d0d02;
   --over: #ff9b92;
@@ -139,7 +136,7 @@ svg { display: block; }
 /* Balones: en uso y de reserva */
 .fleet { display: flex; justify-content: center; gap: 20px; padding: 4px 0 2px; }
 .unit { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; flex: 1 1 0; max-width: 150px; }
-.unit svg { width: 62px; max-width: 100%; height: auto; }
+.unit svg { width: 58px; max-width: 100%; height: auto; }
 .cap { text-align: center; line-height: 1.25; }
 .cap b { display: block; font-size: 15px; font-weight: 600; }
 .cap span { display: block; font-size: 13px; color: var(--muted); }
@@ -150,7 +147,7 @@ svg { display: block; }
 .t-base { fill: var(--muted); opacity: 0.55; }
 .t-hole { fill: var(--surface); }
 .t-guard { fill: var(--muted); opacity: 0.55; }
-.t-valve { fill: var(--valve); }
+.t-valve { fill: var(--muted); opacity: 0.85; }
 .row.is-reserve .dur b { color: var(--muted); }
 
 /* Resumen */
@@ -370,20 +367,19 @@ svg { display: block; }
     return '<header class="top"><span class="mark">' + I_FLAME + '</span><div><div class="eyebrow">Gas licuado</div><h1>Balón de gas</h1></div></header>';
   }
 
-  // Balón de 45 kg (viewBox 100 x 260): protector, válvula verde, cuerpo alto y base con orificios
-  var BODY = 'M12 84C12 52 28 42 50 42C72 42 88 52 88 84V224Q88 232 80 232H20Q12 232 12 224Z';
+  // Balón de 45 kg (viewBox 100 x 280): protector con ventana, válvula, cuerpo alto y base con orificios
+  var BODY = 'M6 92C6 56 24 38 50 38C76 38 94 56 94 92V240Q94 250 84 250H16Q6 250 6 240Z';
   // Figura de un balón; `frac` es la parte que sigue llena (0 a 1)
   function tankSvg(frac, uid, label) {
     frac = Math.max(0, Math.min(1, frac));
-    var hh = 190 * frac, y = 232 - hh;
-    return '<svg viewBox="0 0 100 260" role="img" aria-label="' + label + '">' +
+    var hh = 212 * frac, y = 250 - hh;
+    return '<svg viewBox="0 0 100 280" role="img" aria-label="' + label + '">' +
       '<defs><clipPath id="cp-' + uid + '"><path d="' + BODY + '"/></clipPath></defs>' +
-      '<rect class="t-base" x="18" y="226" width="64" height="26" rx="5"/>' +
-      '<g class="t-hole"><circle cx="32" cy="241" r="3.8"/><circle cx="50" cy="241" r="3.8"/><circle cx="68" cy="241" r="3.8"/></g>' +
-      '<path class="t-guard" d="M23 44L27 17Q28 10 35 10H41V44ZM77 44L73 17Q72 10 65 10H59V44Z"/>' +
-      '<rect class="t-guard" x="22" y="33" width="56" height="11" rx="4"/>' +
-      '<rect class="t-valve" x="43" y="12" width="14" height="32" rx="3"/>' +
-      '<rect class="t-valve" x="45.5" y="5" width="9" height="9" rx="2.2"/>' +
+      '<rect class="t-base" x="16" y="244" width="68" height="32" rx="6"/>' +
+      '<g class="t-hole"><circle cx="35" cy="262" r="4.2"/><circle cx="50" cy="262" r="4.2"/><circle cx="65" cy="262" r="4.2"/><ellipse cx="22.5" cy="262" rx="2" ry="4.2"/><ellipse cx="77.5" cy="262" rx="2" ry="4.2"/></g>' +
+      '<path class="t-guard" fill-rule="evenodd" d="M16 44L20 13Q22 3 32 3H68Q78 3 80 13L84 44ZM43 9H57Q63 9 63 15V34Q63 40 57 40H43Q37 40 37 34V15Q37 9 43 9Z"/>' +
+      '<rect class="t-valve" x="46" y="17" width="8" height="25" rx="2"/>' +
+      '<rect class="t-valve" x="43.5" y="12" width="13" height="7" rx="2.2"/>' +
       '<path class="t-shell" d="' + BODY + '"/>' +
       (frac > 0 ? '<rect class="t-fill" x="0" y="' + y.toFixed(1) + '" width="100" height="' + hh.toFixed(1) + '" clip-path="url(#cp-' + uid + ')"/>' : '') +
       '<path class="t-outline' + (frac === 0 ? ' is-empty' : '') + '" d="' + BODY + '"/></svg>';
