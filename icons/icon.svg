@@ -1,69 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024"><clipPath id="rr"><rect width="1024" height="1024" rx="232"/></clipPath><g clip-path="url(#rr)">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0b2540"/>
-      <stop offset="1" stop-color="#17657f"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="50%" cy="46%" r="50%">
-      <stop offset="0" stop-color="#46b8cf" stop-opacity="0.5"/>
-      <stop offset="1" stop-color="#46b8cf" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#c3cdd6"/>
-      <stop offset="0.2" stop-color="#ffffff"/>
-      <stop offset="0.55" stop-color="#f0f3f6"/>
-      <stop offset="1" stop-color="#a9b6c1"/>
-    </linearGradient>
-    <linearGradient id="guard" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#eef2f5"/>
-      <stop offset="1" stop-color="#b3bfca"/>
-    </linearGradient>
-    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#9aa8b4"/>
-      <stop offset="0.45" stop-color="#e3e9ee"/>
-      <stop offset="1" stop-color="#8795a1"/>
-    </linearGradient>
-    <linearGradient id="flameG" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ff9a3c"/>
-      <stop offset="1" stop-color="#e5391a"/>
-    </linearGradient>
-    <linearGradient id="flameIn" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffe3c9"/>
-      <stop offset="1" stop-color="#ffb27a"/>
-    </linearGradient>
-  </defs>
-
-  <rect width="1024" height="1024" fill="url(#bg)"/>
-  <rect width="1024" height="1024" fill="url(#glow)"/>
-
-  <!-- sombra en el suelo -->
-  <ellipse cx="512" cy="852" rx="205" ry="23" fill="#031322" opacity="0.5"/>
-
-  <!-- balón de 45 kg: coordenadas 100 x 280 -->
-  <g transform="translate(374.5 90) scale(2.75)">
-    <!-- base con orificios -->
-    <rect x="16" y="244" width="68" height="32" rx="6" fill="#9fadb9"/>
-    <circle cx="35" cy="262" r="4.2" fill="#4d5b68"/>
-    <circle cx="50" cy="262" r="4.2" fill="#4d5b68"/>
-    <circle cx="65" cy="262" r="4.2" fill="#4d5b68"/>
-    <ellipse cx="22.5" cy="262" rx="2" ry="4.2" fill="#4d5b68"/>
-    <ellipse cx="77.5" cy="262" rx="2" ry="4.2" fill="#4d5b68"/>
-
-    <!-- protector con ventana y válvula metálica -->
-    <path d="M16 44L20 13Q22 3 32 3H68Q78 3 80 13L84 44Z" fill="url(#guard)"/>
-    <rect x="37" y="9" width="26" height="31" rx="6" fill="#3d4a56"/>
-    <rect x="46" y="17" width="8" height="25" rx="2" fill="url(#metal)"/>
-    <rect x="43.5" y="12" width="13" height="7" rx="2.2" fill="url(#metal)"/>
-
-    <!-- cuerpo -->
-    <path d="M6 92C6 56 24 38 50 38C76 38 94 56 94 92V240Q94 250 84 250H16Q6 250 6 240Z" fill="url(#shell)"/>
-    <rect x="13" y="84" width="9" height="150" rx="4.5" fill="#ffffff" opacity="0.65"/>
-    <path d="M6 236H94" stroke="#a9b6c1" stroke-width="1.2" opacity="0.8"/>
-
-    <!-- llama -->
-    <g transform="translate(50 140) scale(0.32) translate(-512 -594)">
-      <path d="M512 486 C548 528 586 566 586 620 C586 670 553 702 512 702 C471 702 438 670 438 624 C438 592 458 572 476 556 C478 582 491 594 503 594 C497 552 499 520 512 486 Z" fill="url(#flameG)"/>
-      <path d="M512 596 C532 622 550 638 550 662 C550 683 533 696 512 696 C491 696 474 683 474 664 C474 644 493 630 512 596 Z" fill="url(#flameIn)"/>
-    </g>
-  </g>
-</g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Gas">
+<defs>
+  <linearGradient id="igasxbg" x1="0.18" y1="0" x2="0.82" y2="1">
+    <stop offset="0" stop-color="#7AA4F7"/><stop offset="0.46" stop-color="#4D78F3"/><stop offset="1" stop-color="#2950F4"/>
+  </linearGradient>
+  <radialGradient id="igasxlt" cx="0.18" cy="0.06" r="0.78">
+    <stop offset="0" stop-color="#BDEBFB" stop-opacity="0.62"/><stop offset="1" stop-color="#BDEBFB" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="igasxdk" cx="0.86" cy="1.02" r="0.7">
+    <stop offset="0" stop-color="#1B3AD6" stop-opacity="0.45"/><stop offset="1" stop-color="#1B3AD6" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="igasxgw" gradientUnits="userSpaceOnUse" x1="300" y1="160" x2="700" y2="870">
+    <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#EEF5FF"/><stop offset="1" stop-color="#C7DCFC"/>
+  </linearGradient>
+  <linearGradient id="igasxgs" gradientUnits="userSpaceOnUse" x1="300" y1="160" x2="700" y2="870">
+    <stop offset="0" stop-color="#EAFAFF" stop-opacity="0.9"/><stop offset="0.5" stop-color="#BDEBFB" stop-opacity="0.66"/><stop offset="1" stop-color="#99C2F8" stop-opacity="0.58"/>
+  </linearGradient>
+  <filter id="igasxglass" x="-30%" y="-30%" width="160%" height="170%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="20" result="sb"/>
+    <feOffset in="sb" dy="24" result="so"/>
+    <feFlood flood-color="#0E237E" flood-opacity="0.42"/>
+    <feComposite in2="so" operator="in" result="sh0"/>
+    <feComposite in="sh0" in2="SourceAlpha" operator="out" result="shadow"/>
+    <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="b1"/>
+    <feOffset in="b1" dy="8" result="o1"/>
+    <feComposite in="SourceAlpha" in2="o1" operator="arithmetic" k2="1" k3="-1" result="topEdge"/>
+    <feFlood flood-color="#FFFFFF" flood-opacity="1"/>
+    <feComposite in2="topEdge" operator="in" result="hl"/>
+    <feGaussianBlur in="SourceAlpha" stdDeviation="9" result="b2"/>
+    <feOffset in="b2" dy="-12" result="o2"/>
+    <feComposite in="SourceAlpha" in2="o2" operator="arithmetic" k2="1" k3="-1" result="botEdge"/>
+    <feFlood flood-color="#2950F4" flood-opacity="0.38"/>
+    <feComposite in2="botEdge" operator="in" result="inner"/>
+    <feGaussianBlur in="SourceAlpha" stdDeviation="14" result="bump"/>
+    <feSpecularLighting in="bump" surfaceScale="5" specularConstant="0.9" specularExponent="32" lighting-color="#FFFFFF" result="spec">
+      <feDistantLight azimuth="235" elevation="58"/>
+    </feSpecularLighting>
+    <feComposite in="spec" in2="SourceAlpha" operator="in" result="specIn"/>
+    <feMorphology in="SourceAlpha" operator="dilate" radius="2.4" result="dil"/>
+    <feComposite in="dil" in2="SourceAlpha" operator="out" result="ringA"/>
+    <feFlood flood-color="#0B1F6E" flood-opacity="0.32"/>
+    <feComposite in2="ringA" operator="in" result="rim"/>
+    <feMerge>
+      <feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/><feMergeNode in="inner"/>
+      <feMergeNode in="specIn"/><feMergeNode in="hl"/><feMergeNode in="rim"/>
+    </feMerge>
+  </filter>
+</defs><clipPath id="igasxclip"><rect width="1024" height="1024" rx="228"/></clipPath>
+<g clip-path="url(#igasxclip)">
+<rect width="1024" height="1024" fill="url(#igasxbg)"/>
+<rect width="1024" height="1024" fill="url(#igasxlt)"/>
+<rect width="1024" height="1024" fill="url(#igasxdk)"/>
+<g filter="url(#igasxglass)" fill="url(#igasxgs)"><path fill-rule="evenodd" d="M440 172 H584 a58 58 0 0 1 58 58 V400 H382 V230 a58 58 0 0 1 58 -58 Z M462 214 a30 30 0 0 0 0 60 H562 a30 30 0 0 0 0 -60 Z"/></g>
+<g filter="url(#igasxglass)" fill="url(#igasxgw)"><rect x="290" y="330" width="444" height="492" rx="150"/><rect x="342" y="800" width="340" height="58" rx="24"/></g>
+<g filter="url(#igasxglass)" fill="url(#igasxgs)"><rect x="408" y="500" width="208" height="150" rx="34"/></g>
+<text x="512" y="606" font-family="Inter, 'DejaVu Sans', sans-serif" font-weight="800" font-size="104" text-anchor="middle" fill="#2950F4" fill-opacity="0.75">45</text>
+</g>
+</svg>

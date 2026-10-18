@@ -9,72 +9,174 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Balón de gas">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#eef1f4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f161d" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#DFE9FD" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13244A" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <!--STANDALONE:END-->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600&display=swap">
 <style>
 /* Concepto: una sola tarjeta con el balón en uso (días corriendo, avance contra el promedio),
    luego el resumen histórico, un gráfico de barras por balón y la lista de registros.
    Naranja llama para el balón, azul pizarra para el resto. */
+/*DS:TOKENS:START*/
+/* ── Domésticas · sistema de diseño común (v1) ──────────────────────────────
+   Paleta: #2950F4 · #4D78F3 · #719DF6 · #99C2F8 · #BDEBFB, con el azul marino #182D4A de fondo oscuro.
+   Estilo iOS 27: tipografía del sistema (SF Pro), tarjetas blancas sobre fondo agrupado,
+   barras y botones de vidrio, cápsulas, esquinas amplias. Igual en todas las apps de la casa. */
 :root {
-  --bg: #eef1f4;
-  --surface: #ffffff;
-  --ink: #14202b;
-  --muted: #566371;
-  --line: #d8dee5;
-  --track: #e2e8ee;
-  --accent: #c2410c;
-  --accent-bg: #fdebe0;
-  --on-accent: #ffffff;
-  --over: #b42318;
-  --over-bg: #fdecea;
-  --scrim: rgba(10, 16, 22, 0.5);
-  --font-display: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ds-b1: #2950F4; --ds-b2: #4D78F3; --ds-b3: #719DF6; --ds-b4: #99C2F8; --ds-b5: #BDEBFB; --ds-navy: #182D4A;
+  --ds-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --ds-font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --ds-font-round: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --ds-font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --ds-r-card: 24px; --ds-r-inner: 16px; --ds-r-field: 14px; --ds-r-sheet: 34px; --ds-r-pill: 999px;
+
+  --ds-bg: #EFF3FB;
+  --ds-bg-top: #DFE9FD;
+  --ds-surface: #FFFFFF;
+  --ds-surface-2: #F3F6FD;
+  --ds-fill: rgba(41, 80, 244, 0.07);
+  --ds-fill-2: rgba(41, 80, 244, 0.13);
+  --ds-ink: #0E1B33;
+  --ds-ink-2: #55617A;
+  --ds-ink-3: #8691A8;
+  --ds-line: rgba(24, 45, 74, 0.12);
+  --ds-line-2: rgba(24, 45, 74, 0.2);
+  --ds-tint: #2950F4;
+  --ds-tint-soft: #E5ECFE;
+  --ds-btn: #2950F4;
+  --ds-on-btn: #FFFFFF;
+  --ds-pos: #157A43; --ds-pos-soft: #DDF4E6;
+  --ds-neg: #D1281C; --ds-neg-soft: #FDE8E6;
+  --ds-warn: #A35500; --ds-warn-soft: #FFF0D9;
+  --ds-hero: radial-gradient(120% 90% at 100% 0%, rgba(189, 235, 251, 0.45) 0%, rgba(189, 235, 251, 0) 55%), linear-gradient(150deg, #4D78F3 0%, #2950F4 58%, #2141D6 100%);
+  --ds-hero-ink: #FFFFFF;
+  --ds-hero-ink-2: rgba(255, 255, 255, 0.84);
+  --ds-hero-line: rgba(255, 255, 255, 0.28);
+  --ds-hero-glass: rgba(255, 255, 255, 0.18);
+  --ds-glass: rgba(255, 255, 255, 0.7);
+  --ds-glass-strong: rgba(255, 255, 255, 0.86);
+  --ds-glass-line: rgba(255, 255, 255, 0.85);
+  --ds-glass-edge: rgba(14, 27, 51, 0.1);
+  --ds-glass-blur: blur(22px) saturate(1.8);
+  --ds-shadow-1: 0 1px 2px rgba(24, 45, 74, 0.05), 0 4px 14px rgba(24, 45, 74, 0.05);
+  --ds-shadow-2: 0 12px 32px rgba(24, 45, 74, 0.16), 0 2px 8px rgba(24, 45, 74, 0.08);
+  --ds-shadow-btn: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 6px 16px rgba(41, 80, 244, 0.26);
+  --ds-scrim: rgba(14, 27, 51, 0.36);
+  --ds-chart-1: #2950F4; --ds-chart-2: #719DF6; --ds-chart-3: #99C2F8; --ds-chart-4: #BDEBFB;
   color-scheme: light;
-  box-sizing: border-box;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0f161d;
-    --surface: #18212b;
-    --ink: #e9eef3;
-    --muted: #9aa7b4;
-    --line: #2a3541;
-    --track: #26313c;
-    --accent: #ff9158;
-    --accent-bg: #3a2619;
-    --on-accent: #1d0d02;
-    --over: #ff9b92;
-    --over-bg: #3b1f1d;
-    --scrim: rgba(0, 0, 0, 0.62);
+    --ds-bg: #0A1224;
+    --ds-bg-top: #13244A;
+    --ds-surface: #152340;
+    --ds-surface-2: #1C2C4D;
+    --ds-fill: rgba(113, 157, 246, 0.12);
+    --ds-fill-2: rgba(113, 157, 246, 0.2);
+    --ds-ink: #EEF3FF;
+    --ds-ink-2: #A9B6D0;
+    --ds-ink-3: #77859F;
+    --ds-line: rgba(189, 235, 251, 0.11);
+    --ds-line-2: rgba(189, 235, 251, 0.2);
+    --ds-tint: #8EB0FA;
+    --ds-tint-soft: rgba(113, 157, 246, 0.18);
+    --ds-btn: #3A62F5;
+    --ds-on-btn: #FFFFFF;
+    --ds-pos: #5DD68E; --ds-pos-soft: rgba(93, 214, 142, 0.14);
+    --ds-neg: #FF8A80; --ds-neg-soft: rgba(255, 138, 128, 0.14);
+    --ds-warn: #FFB65C; --ds-warn-soft: rgba(255, 182, 92, 0.14);
+    --ds-hero: radial-gradient(120% 90% at 100% 0%, rgba(189, 235, 251, 0.28) 0%, rgba(189, 235, 251, 0) 55%), linear-gradient(150deg, #3D68F2 0%, #2950F4 55%, #1C38C2 100%);
+    --ds-glass: rgba(24, 40, 70, 0.62);
+    --ds-glass-strong: rgba(24, 40, 70, 0.84);
+    --ds-glass-line: rgba(255, 255, 255, 0.14);
+    --ds-glass-edge: rgba(0, 0, 0, 0.4);
+    --ds-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --ds-shadow-2: 0 14px 36px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+    --ds-shadow-btn: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 16px rgba(0, 0, 0, 0.35);
+    --ds-scrim: rgba(0, 0, 0, 0.55);
+    --ds-chart-1: #719DF6; --ds-chart-2: #4D78F3; --ds-chart-3: #99C2F8; --ds-chart-4: #BDEBFB;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0f161d;
-  --surface: #18212b;
-  --ink: #e9eef3;
-  --muted: #9aa7b4;
-  --line: #2a3541;
-  --track: #26313c;
-  --accent: #ff9158;
-  --accent-bg: #3a2619;
-  --on-accent: #1d0d02;
-  --over: #ff9b92;
-  --over-bg: #3b1f1d;
-  --scrim: rgba(0, 0, 0, 0.62);
+  --ds-bg: #0A1224;
+  --ds-bg-top: #13244A;
+  --ds-surface: #152340;
+  --ds-surface-2: #1C2C4D;
+  --ds-fill: rgba(113, 157, 246, 0.12);
+  --ds-fill-2: rgba(113, 157, 246, 0.2);
+  --ds-ink: #EEF3FF;
+  --ds-ink-2: #A9B6D0;
+  --ds-ink-3: #77859F;
+  --ds-line: rgba(189, 235, 251, 0.11);
+  --ds-line-2: rgba(189, 235, 251, 0.2);
+  --ds-tint: #8EB0FA;
+  --ds-tint-soft: rgba(113, 157, 246, 0.18);
+  --ds-btn: #3A62F5;
+  --ds-on-btn: #FFFFFF;
+  --ds-pos: #5DD68E; --ds-pos-soft: rgba(93, 214, 142, 0.14);
+  --ds-neg: #FF8A80; --ds-neg-soft: rgba(255, 138, 128, 0.14);
+  --ds-warn: #FFB65C; --ds-warn-soft: rgba(255, 182, 92, 0.14);
+  --ds-hero: radial-gradient(120% 90% at 100% 0%, rgba(189, 235, 251, 0.28) 0%, rgba(189, 235, 251, 0) 55%), linear-gradient(150deg, #3D68F2 0%, #2950F4 55%, #1C38C2 100%);
+  --ds-glass: rgba(24, 40, 70, 0.62);
+  --ds-glass-strong: rgba(24, 40, 70, 0.84);
+  --ds-glass-line: rgba(255, 255, 255, 0.14);
+  --ds-glass-edge: rgba(0, 0, 0, 0.4);
+  --ds-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ds-shadow-2: 0 14px 36px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --ds-shadow-btn: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 16px rgba(0, 0, 0, 0.35);
+  --ds-scrim: rgba(0, 0, 0, 0.55);
+  --ds-chart-1: #719DF6; --ds-chart-2: #4D78F3; --ds-chart-3: #99C2F8; --ds-chart-4: #BDEBFB;
   color-scheme: dark;
 }
-html.lock { overflow: hidden; }
+html { background: var(--ds-bg); }
+body {
+  font-family: var(--ds-font);
+  background: linear-gradient(180deg, var(--ds-bg-top) 0, var(--ds-bg) 340px) no-repeat, var(--ds-bg);
+  color: var(--ds-ink);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.012em;
+}
+/* ── fin de los tokens comunes ── */
+
+/* Variables propias de las apps de cuentas, ahora tomadas del sistema común */
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+:root:not([data-ds]), :root[data-theme] {
+  --bg: var(--ds-bg); --surface: var(--ds-surface); --ink: var(--ds-ink); --muted: var(--ds-ink-2); --line: var(--ds-line-2);
+  --track: var(--ds-fill); --seg-on: var(--ds-surface); --accent: var(--ds-tint); --accent-bg: var(--ds-tint-soft); --on-accent: var(--ds-on-btn);
+  --in: var(--ds-pos); --in-bg: var(--ds-pos-soft); --over: var(--ds-neg); --over-bg: var(--ds-neg-soft);
+  --card-a: var(--ds-b2); --card-b: var(--ds-b1); --card-shade: rgba(14, 27, 80, 0.32); --card-edge: rgba(255, 255, 255, 0.22);
+  --on-card: var(--ds-hero-ink); --on-card-muted: var(--ds-hero-ink-2); --on-card-line: var(--ds-hero-line);
+  --lime: #FFFFFF; --lime-ink: var(--ds-b1); --warn-soft: #FFE3A3; --busy: #F5A524; --scrim: var(--ds-scrim);
+  --gold: var(--ds-b5); --gold-soft: #FFE3A3; --gold-line: var(--ds-b2);
+  --ember: var(--ds-b5); --amber: #FFE3A3; --alarm: #FF8A80;
+  --dot-1: var(--ds-b5); --dot-2: var(--ds-b4); --dot-3: var(--ds-b3); --dot-4: #FFFFFF;
+  --tit: var(--ds-b1); --tit-ink: #2141D6; --tit-bg: var(--ds-tint-soft);
+  --adi: #2E9BD6; --adi-ink: #146896; --adi-bg: #DDF3FC;
+  --font-display: var(--ds-font-display); --font-body: var(--ds-font);
+  --piti: #2950F4; --piti-bg: #E5ECFE; --emi: #0B85BD; --emi-bg: #DCF2FB; --on-person: #FFFFFF;
+  --done: var(--ds-pos); --done-bg: var(--ds-pos-soft); --on-done: #FFFFFF; --warn: var(--ds-warn);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --piti: #8EB0FA; --piti-bg: rgba(113, 157, 246, 0.18); --emi: #7FD3F5; --emi-bg: rgba(127, 211, 245, 0.15); --on-person: #0A1224; --on-done: #0A1224;
+    --tit: #8EB0FA; --tit-ink: #B9CDFC; --tit-bg: rgba(113, 157, 246, 0.18);
+    --adi: #7FD3F5; --adi-ink: #BDEBFB; --adi-bg: rgba(127, 211, 245, 0.15);
+  }
+}
+:root[data-theme="dark"] {
+    --piti: #8EB0FA; --piti-bg: rgba(113, 157, 246, 0.18); --emi: #7FD3F5; --emi-bg: rgba(127, 211, 245, 0.15); --on-person: #0A1224; --on-done: #0A1224;
+  --tit: #8EB0FA; --tit-ink: #B9CDFC; --tit-bg: rgba(113, 157, 246, 0.18);
+  --adi: #7FD3F5; --adi-ink: #BDEBFB; --adi-bg: rgba(127, 211, 245, 0.15);
+}
+
+/*DS:TOKENS:END*/html.lock { overflow: hidden; }
 [hidden]:not([hidden=until-found i]) { display: none !important; }
 body {
   margin: 0;
@@ -238,6 +340,194 @@ svg { display: block; }
   position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); max-width: 448px; margin: 0 auto; z-index: 20;
   background: var(--ink); color: var(--bg); padding: 12px 16px; border-radius: 14px; font-size: 15px; text-align: center;
 }
+
+/*DS:LAYER:START*/
+/* ── Domésticas · base común (v1) ── */
+html { background: var(--ds-bg); }
+body {
+  font-family: var(--ds-font);
+  background: linear-gradient(180deg, var(--ds-bg-top) 0, var(--ds-bg) 360px) no-repeat, var(--ds-bg);
+  color: var(--ds-ink);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+h1, h2, h3, h4 { font-family: var(--ds-font-display); letter-spacing: -0.022em; }
+button, input, select, textarea { font-family: inherit; }
+::selection { background: var(--ds-tint-soft); }
+:focus-visible { outline-color: var(--ds-tint); }
+input, select, textarea { accent-color: var(--ds-btn); caret-color: var(--ds-tint); }
+@keyframes ds-rise { from { transform: translateY(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+.mark.app-icon, img.app-icon { display: block; padding: 0; background: none; object-fit: cover; border-radius: 23%; box-shadow: 0 0 0 0.5px rgba(14, 27, 51, 0.08), 0 4px 12px rgba(41, 80, 244, 0.25); }
+/* ── fin de la base común ── */
+
+/* ── Domésticas · componentes (familia de cuentas: Copec, FAN, Master, LiderBCI) ── */
+body { font-size: 17px; line-height: 1.38; }
+.app { gap: 20px; padding-block: 14px 48px; }
+.eyebrow { font-size: 13px; font-weight: 600; text-transform: none; letter-spacing: -0.005em; color: var(--ds-ink-2); }
+.muted { color: var(--ds-ink-2); }
+
+/* Encabezado con título grande */
+.top { gap: 12px; padding-top: 6px; }
+.top h1 { font-size: 34px; line-height: 1.08; font-weight: 700; letter-spacing: -0.03em; }
+.mark {
+  width: 46px; height: 46px; border-radius: 13px; color: #fff; background: var(--ds-hero);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 0 rgba(14, 27, 51, 0.18), 0 4px 12px rgba(41, 80, 244, 0.28);
+}
+.mark svg, .mark img { filter: drop-shadow(0 1px 1px rgba(14, 27, 51, 0.25)); }
+
+/* Botones: cápsulas, relleno sólido o tintado */
+.btn {
+  min-height: 50px; border-radius: var(--ds-r-pill); border: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em;
+  transition: transform 0.16s ease, opacity 0.16s ease, background-color 0.16s ease;
+}
+.btn:active { transform: scale(0.97); opacity: 0.88; }
+.btn.primary { background: var(--ds-btn); color: var(--ds-on-btn); box-shadow: var(--ds-shadow-btn); }
+.btn.tonal { background: var(--ds-tint-soft); color: var(--ds-tint); }
+.btn.ghost { background: var(--ds-surface); color: var(--ds-tint); border: 0; box-shadow: var(--ds-shadow-1); }
+.btn.plus { background: var(--ds-surface); color: var(--ds-pos); border: 0; box-shadow: var(--ds-shadow-1); }
+.btn.danger { background: var(--ds-neg-soft); color: var(--ds-neg); border: 0; }
+.btn.danger.armed { background: var(--ds-neg); color: #fff; }
+.btn.small { min-height: 40px; padding: 0 16px; font-size: 15px; }
+.btn.big { min-height: 58px; border-radius: 20px; font-size: 16px; line-height: 1.2; }
+.linkbtn { color: var(--ds-tint); text-decoration: none; font-size: 15px; }
+
+/* Tarjeta principal: degradado de la paleta con brillo de vidrio */
+.hero {
+  border-radius: 28px; padding: 20px 20px 18px; background: var(--ds-hero); color: var(--ds-hero-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38), inset 0 -1px 0 rgba(14, 27, 51, 0.16), 0 16px 34px rgba(41, 80, 244, 0.26);
+}
+.hero::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 38%); }
+.hero-mark, .hero-art { opacity: 0.12; }
+.hero .eyebrow, .hero-note { color: var(--ds-hero-ink-2); }
+.hero-btn, .hero .chip, .hero button.ghost {
+  background: var(--ds-hero-glass); border: 0.5px solid rgba(255, 255, 255, 0.45); color: #fff;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.hero-cta { border-radius: var(--ds-r-pill); background: #fff; color: var(--ds-b1); font-weight: 700; padding: 0 20px; box-shadow: 0 6px 16px rgba(14, 27, 51, 0.2); }
+.total { font-family: var(--ds-font-round); font-weight: 700; letter-spacing: -0.025em; }
+.hero-stats { border-top-color: var(--ds-hero-line); }
+.hero-stats dt { color: var(--ds-hero-ink-2); }
+
+/* Encabezados de sección */
+.sec-head h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.025em; }
+.sync { color: var(--ds-ink-2); }
+
+/* Listas agrupadas (estilo Ajustes de iOS) */
+.list, .steps {
+  gap: 0; background: var(--ds-surface); border-radius: var(--ds-r-card); overflow: hidden; box-shadow: var(--ds-shadow-1);
+}
+.row, .step {
+  position: relative; border: 0; border-radius: 0; background: transparent; min-height: 60px; padding: 11px 16px 11px 14px;
+}
+.row:active, .step:active { background: var(--ds-fill); }
+.row.old { background: transparent; opacity: 0.62; }
+.list > li + li > .row::before, .steps > li + li > .step::before {
+  content: ""; position: absolute; top: 0; right: 0; left: 64px; border-top: 0.5px solid var(--ds-line-2);
+}
+.ico { width: 38px; height: 38px; background: var(--ds-fill); color: var(--ds-ink-2); }
+.ico.in { background: var(--ds-pos-soft); color: var(--ds-pos); }
+.ico.auto { background: var(--ds-tint-soft); color: var(--ds-tint); }
+.store { font-weight: 600; }
+.meta, .run { color: var(--ds-ink-2); }
+.amt { font-weight: 600; }
+.amt.in { color: var(--ds-pos); }
+.tag { background: var(--ds-tint-soft); color: var(--ds-tint); }
+.step-n { background: var(--ds-tint-soft); color: var(--ds-tint); }
+.step.done .step-n { background: var(--ds-pos-soft); color: var(--ds-pos); }
+.step-t span { color: var(--ds-ink-2); }
+.anchor { color: var(--ds-ink-3); padding: 8px 16px; }
+.anchor::before, .anchor::after { border-top: 0.5px solid var(--ds-line-2); }
+.empty { border: 0; border-radius: var(--ds-r-card); background: var(--ds-surface); box-shadow: var(--ds-shadow-1); color: var(--ds-ink-2); padding: 18px; }
+.foot { color: var(--ds-ink-3); }
+
+/* Filtros en cápsula */
+.chip { border: 0; background: var(--ds-fill); color: var(--ds-ink); font-weight: 600; min-height: 36px; padding: 0 15px; }
+.chip[aria-pressed="true"] { background: var(--ds-btn); color: #fff; }
+
+/* Datos y respaldo */
+.backup { border: 0; border-radius: var(--ds-r-card); background: var(--ds-surface); box-shadow: var(--ds-shadow-1); }
+.backup textarea, .field textarea { border: 0; border-radius: var(--ds-r-field); background: var(--ds-surface-2); }
+
+/* Hojas (sheets) */
+.backdrop { background: var(--ds-scrim); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.panel {
+  background: var(--ds-surface); border-radius: var(--ds-r-sheet) var(--ds-r-sheet) 0 0; padding-top: 30px;
+  box-shadow: 0 -10px 40px rgba(14, 27, 51, 0.18); animation: ds-rise 0.28s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+.panel::before { content: ""; position: absolute; top: 8px; left: 50%; width: 38px; height: 5px; margin-left: -19px; border-radius: 3px; background: var(--ds-line-2); }
+.panel h2 { font-size: 24px; font-weight: 700; }
+.panel .sub { color: var(--ds-ink-2); }
+.field > span { font-size: 13px; font-weight: 600; color: var(--ds-ink-2); padding-left: 4px; }
+.field input[type="date"], .field input[type="time"], .field input[type="text"], .field input[type="url"], .field input[type="number"], .field input:not([type]), .field select {
+  border: 1.5px solid transparent; border-radius: var(--ds-r-field); background: var(--ds-surface-2); min-height: 50px;
+}
+.field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--ds-tint); box-shadow: 0 0 0 4px var(--ds-tint-soft); }
+.price-wrap b { color: var(--ds-ink-3); }
+
+/* Control segmentado en cápsula */
+.seg { background: var(--ds-fill); border-radius: var(--ds-r-pill); padding: 4px; gap: 4px; }
+.seg button { border-radius: var(--ds-r-pill); min-height: 40px; color: var(--ds-ink-2); }
+.seg button[aria-pressed="true"] { background: var(--ds-surface); color: var(--ds-ink); box-shadow: 0 2px 8px rgba(14, 27, 51, 0.12), 0 0 0 0.5px rgba(14, 27, 51, 0.04); }
+
+/* Avisos y notas */
+.err { border-radius: var(--ds-r-field); background: var(--ds-neg-soft); color: var(--ds-neg); }
+.note { border-radius: var(--ds-r-field); background: var(--ds-tint-soft); color: var(--ds-ink); }
+.found li, .mails li { border-radius: 14px; background: var(--ds-surface-2); }
+.guide li::before { background: var(--ds-tint-soft); color: var(--ds-tint); }
+.peek summary, .how summary { color: var(--ds-tint); }
+.how summary { color: var(--ds-ink); }
+.raw { background: var(--ds-surface-2); border-radius: 12px; }
+.mono { background: var(--ds-fill); font-family: var(--ds-font-mono); }
+
+/* Aviso flotante de vidrio */
+.toast {
+  border-radius: var(--ds-r-pill); background: rgba(14, 27, 51, 0.86); color: #fff; padding: 8px 20px;
+  -webkit-backdrop-filter: var(--ds-glass-blur); backdrop-filter: var(--ds-glass-blur);
+  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.25), 0 10px 30px rgba(14, 27, 51, 0.3);
+}
+/* ── fin de componentes ── */
+/* Tarjetas secundarias (Master: por tarjeta, cuotas; plegables) */
+.tile, .cq { border: 0; border-radius: 20px; background: var(--ds-surface); box-shadow: var(--ds-shadow-1); }
+.fold { border: 0; border-radius: var(--ds-r-card); background: var(--ds-surface); box-shadow: var(--ds-shadow-1); }
+.stepper button, .step-val { border: 0; background: var(--ds-surface-2); border-radius: var(--ds-r-field); }
+.period { border-top: 0.5px solid var(--ds-line-2); }
+.linkrow { border: 0; border-radius: var(--ds-r-card); background: var(--ds-surface); box-shadow: var(--ds-shadow-1); min-height: 64px; padding: 12px 14px 12px 12px; }
+.linkrow:active { background: var(--ds-surface-2); }
+.linkrow > svg { color: var(--ds-ink-3); }
+.mark.sm { width: 40px; height: 40px; border-radius: 11px; }
+.num { background: var(--ds-tint-soft); color: var(--ds-tint); }
+.mark.app-icon { display: block; padding: 0; background: none; object-fit: cover; border-radius: 23%; box-shadow: 0 0 0 0.5px rgba(14, 27, 51, 0.08), 0 4px 12px rgba(41, 80, 244, 0.25); }
+.panel .btn.ghost { background: var(--ds-fill); box-shadow: none; }
+
+/* ── Domésticas · componentes de las apps de la casa ── */
+.card { border: 0; border-radius: 28px; background: var(--ds-surface); box-shadow: var(--ds-shadow-1); padding: 20px; }
+.chip:not(button) { background: var(--ds-tint-soft); color: var(--ds-tint); min-height: 28px; padding: 0 12px; font-size: 14px; }
+.badge { background: var(--ds-tint-soft); color: var(--ds-tint); }
+.big, .days b, .dur b { font-family: var(--ds-font-round); letter-spacing: -0.02em; }
+.tile .big small { font-family: var(--ds-font); }
+.chart { border: 0; border-radius: var(--ds-r-card); background: var(--ds-surface); box-shadow: var(--ds-shadow-1); }
+.c-bar { fill: var(--ds-chart-1); }
+.c-avg { stroke: var(--ds-ink-2); }
+.legend i { border-top-color: var(--ds-ink-2); }
+.bar { background: var(--ds-fill-2); }
+.bar > span { background: linear-gradient(90deg, var(--ds-b3), var(--ds-b1)); }
+.bar.over > span { background: var(--ds-neg); }
+.row.is-active { border: 0; padding: 11px 16px 11px 14px; box-shadow: inset 4px 0 0 var(--ds-tint); }
+.list > li.row + li.row::before { content: ""; position: absolute; top: 0; right: 0; left: 64px; border-top: 0.5px solid var(--ds-line-2); }
+.empty { border-style: none; }
+.chips label { border: 0; background: var(--ds-fill); color: var(--ds-ink); min-height: 44px; }
+.chips input:checked + label { background: var(--ds-btn); color: #fff; }
+.hint { color: var(--ds-ink-3); }
+.note strong { color: var(--ds-ink); }
+/* ── fin de componentes de la casa ── */
+
+/* Gas */
+.note { background: none; border-radius: 0; padding: 0; color: var(--ds-ink-2); }
+.t-shell { fill: var(--ds-fill-2); }
+.t-fill { fill: var(--ds-b1); }
+
+/*DS:LAYER:END*/
 </style>
 </head>
 <body>
@@ -364,7 +654,7 @@ svg { display: block; }
 
   /* ---------- Vistas ---------- */
   function header() {
-    return '<header class="top"><span class="mark">' + I_FLAME + '</span><div><div class="eyebrow">Gas licuado</div><h1>Balón de gas</h1></div></header>';
+    return '<header class="top"><img class="mark app-icon" src="icons/apple-touch-icon.png" alt=""><div><div class="eyebrow">Gas licuado</div><h1>Balón de gas</h1></div></header>';
   }
 
   // Balón de 45 kg (viewBox 100 x 280): protector con ventana, válvula, cuerpo alto y base con orificios
